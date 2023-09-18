@@ -718,3 +718,26 @@ jobs:
         with:
           path: ${{ github.workspace }}/ccache
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+
+## my edits 
+
+name: My Test Single Project For Sonar Cloud
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{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}}
+          SONAR_TOKEN: ${{67d8e69f48bf04ba4bf99a68b35fc6b0c7664257}} 
