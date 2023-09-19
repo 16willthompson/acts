@@ -9,7 +9,7 @@ on:
 jobs:
   release:
     name: Make release
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
