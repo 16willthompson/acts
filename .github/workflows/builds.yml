@@ -23,7 +23,7 @@ env:
 
 jobs:
   lcg:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/${{ matrix.image }}:v41
     strategy:
       matrix:
@@ -132,7 +132,7 @@ jobs:
         run: ${SETUP} && ./build-downstream/bin/ShowActsVersion
 
   linux_ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/ubuntu2204:v41
     env:
       INSTALL_DIR: ${{ github.workspace }}/install
@@ -226,7 +226,7 @@ jobs:
         run: ./build-downstream/bin/ShowActsVersion
 
   linux_examples_test:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/ubuntu2204:v41
     needs: [linux_ubuntu]
     env:
@@ -275,7 +275,7 @@ jobs:
           && cat ${PYTEST_MD_REPORT_OUTPUT} >> $GITHUB_STEP_SUMMARY
 
   linux_physmon:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/ubuntu2204:v41
     needs: [linux_ubuntu]
     env:
@@ -330,7 +330,7 @@ jobs:
 
   linux_physmon_perf_report:
     needs: [linux_physmon]
-    runs-on: ubuntu-latest
+    runs-on: acts1
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Install dependencies
@@ -357,7 +357,7 @@ jobs:
           git push
 
   linux_ubuntu_extra:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     strategy:
       matrix:
         include:
@@ -450,7 +450,7 @@ jobs:
         run: ./build-downstream/bin/ShowActsVersion
 
   linux-nodeps:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/${{ matrix.image }}:v41
     strategy:
       matrix:
@@ -639,7 +639,7 @@ jobs:
         run: ./build-downstream/bin/ShowActsVersion
 
   cuda:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/ubuntu1804_cuda:v41
     steps:
       - uses: actions/checkout@v3
@@ -676,7 +676,7 @@ jobs:
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
 
   sycl:
-    runs-on: ubuntu-latest
+    runs-on: acts1
     container: ghcr.io/acts-project/ubuntu2004_oneapi:v41
     defaults:
       run:
@@ -731,7 +731,7 @@ on:
 jobs:
   sonarcloud:
     name: SonarCloud
-    runs-on: ubuntu-latest
+    runs-on: acts1
     steps:
       - uses: actions/checkout@v3
         with:
