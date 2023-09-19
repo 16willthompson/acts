@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   docs:
-    runs-on: acts1
+    runs-on: [self-hosted, linux]
     container: ghcr.io/acts-project/ubuntu2204:v41
     env:
         DOXYGEN_WARN_AS_ERROR: FAIL_ON_WARNINGS
