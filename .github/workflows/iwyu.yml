@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   iwyu_ubuntu_2204:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     container: ghcr.io/acts-project/ubuntu2204_clang:v41
     steps:
       - name: Install git lfs and llvm dev
