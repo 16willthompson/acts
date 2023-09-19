@@ -27,7 +27,7 @@ env:
 #      all unit tests should be reactivated.
 jobs:
   build_debug:
-    runs-on: acts1
+    runs-on: [self-hosted, linux]
     container: ghcr.io/acts-project/ubuntu2204:v41
     steps:
       - uses: actions/checkout@v3
@@ -72,7 +72,7 @@ jobs:
           files: ./build/coverage/cov.xml
 
   build_performance:
-    runs-on: acts1
+    runs-on: [self-hosted, linux]
     container: ghcr.io/acts-project/ubuntu2204:v41
     if: github.ref == 'refs/heads/main'
     steps:
@@ -97,7 +97,7 @@ jobs:
           path: perf.csv
   
   metric_tracking:
-    runs-on: acts1
+    runs-on: [self-hosted, linux]
     needs: build_performance
     if: github.ref == 'refs/heads/main'
     steps:
