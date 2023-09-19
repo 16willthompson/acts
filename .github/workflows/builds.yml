@@ -1,5 +1,3 @@
-runs-on: self-hosted
-
 name: Builds
 
 on:
