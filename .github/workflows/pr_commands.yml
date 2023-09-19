@@ -6,7 +6,7 @@ jobs:
     # This job only runs for pull request comments
     name: PR comment
     if: "${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/') }}"
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v3
       - name: Install prerequisites
