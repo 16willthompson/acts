@@ -40,7 +40,7 @@ on:
 jobs:
   sonarUbuntu:
     name: Sonar-Ubuntu
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     env:
       SONAR_SCANNER_VERSION: 4.7.0.2747
       SONAR_SERVER_URL: "https://sonarcloud.io"
