@@ -36,8 +36,6 @@ struct IsMultiComponentBoundParameters<MultiComponentBoundTrackParameters>
 
 }  // namespace detail
 
-namespace Experimental {
-
 /// Gaussian Sum Fitter implementation.
 /// @tparam propagator_t The propagator type on which the algorithm is built on
 /// @tparam bethe_heitler_approx_t The type of the Bethe-Heitler-Approximation
@@ -215,7 +213,8 @@ struct GaussianSumFitter {
             .intersect(GeometryContext{},
                        sParameters.position(GeometryContext{}),
                        sParameters.direction(), true)
-            .intersection.status;
+            .closest()
+            .status();
 
     if (intersectionStatusStartSurface != Intersection3D::Status::onSurface) {
       ACTS_ERROR(
@@ -471,5 +470,4 @@ struct GaussianSumFitter {
   }
 };
 
-}  // namespace Experimental
 }  // namespace Acts
