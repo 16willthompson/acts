@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+      
+  concurrency: 
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
+jobs:
+
+  CUDA toolkit version:
+    name: CUDA toolkit version
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: 
+        cuda-version:
+          - "11.8"
+          - "12.2"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup CUDA
+        uses: [script here]
+        with:
+          cuda-version: ${{ matrix.cuda-version }}
+          coverage: none
+
+      
