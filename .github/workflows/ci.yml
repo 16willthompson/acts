@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  CUDA toolkit version:
+  CUDA_toolkit_version:
     name: CUDA toolkit version
     runs-on: ubuntu-latest
 
@@ -29,4 +29,97 @@ jobs:
           cuda-version: ${{ matrix.cuda-version }}
           coverage: none
 
+  linux_ubuntu:
+    runs-on: [self-hosted, linux]
+    container: ghcr.io/acts-project/ubuntu2204:v41
+    env:
+      INSTALL_DIR: ${{ github.workspace }}/install
+      ACTS_LOG_FAILURE_THRESHOLD: WARNING
+    steps:
+      - name: Install git lfs
+        run: apt-get update && apt-get install -y git-lfs
+
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: true
+
+      - name: Restore ccache
+        uses: actions/cache/restore@v3
+        id: ccache-restore
+        with:
+          path: ${{ github.workspace }}/ccache
+          key: ${{ runner.os  }}-ccache-linux_ubuntu_${{ env.CCACHE_KEY_SUFFIX }}_${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os  }}-ccache-linux_ubuntu_${{ env.CCACHE_KEY_SUFFIX }}_
+
+      - name: Configure
+        # setting CMAKE_CXX_STANDARD=17 is a workaround for a bug in the
+        # dd4hep CMake configuration that gets triggered on recent CMake
+        # versions 
+        run: >
+          ccache -z &&
+          cmake -B build -S .
+          -GNinja
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_CXX_FLAGS=-Werror
+          -DCMAKE_CXX_STANDARD=17
+          -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+          -DACTS_ENABLE_LOG_FAILURE_THRESHOLD=ON 
+          -DACTS_BUILD_EVERYTHING=ON
+          -DACTS_BUILD_ODD=ON
+          -DACTS_BUILD_EXAMPLES_PYTHON_BINDINGS=ON
+          -DACTS_BUILD_EXAMPLES_BINARIES=ON
+          -DACTS_BUILD_EXAMPLES_EDM4HEP=ON
+          -DACTS_FORCE_ASSERTIONS=ON
+          -DACTS_BUILD_ANALYSIS_APPS=ON
+          -DACTS_BUILD_PLUGIN_ONNX=ON
+          -DACTS_BUILD_PLUGIN_ACTSVG=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: ccache stats
+        run: ccache -s
+
+      - name: Save ccache
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: ${{ github.workspace }}/ccache
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+
+      - name: Unit tests
+        run: ctest --test-dir build -j$(nproc)
+
+      - name: Integration tests
+        run: cmake --build build --target integrationtests
+
+      - name: Install
+        run: cmake --build build --target install
+
+
+      - name: Package build
+        run: tar czf build.tar.gz -C build --exclude "*.o" --exclude "bin/ActsUnitTest*" --exclude "bin/ActsIntegrationTest*" .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: acts-linux-ubuntu
+          path: build.tar.gz
+
+      - name: Downstream configure
+        run: >
+          cmake -B build-downstream -S Tests/DownstreamProject
+          -GNinja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_CXX_FLAGS=-Werror
+          -DCMAKE_CXX_STANDARD=17
+          -DCMAKE_PREFIX_PATH="${INSTALL_DIR}"
+
+      - name: Downstream build
+        run: cmake --build build-downstream
+
+      - name: Downstream run
+        run: ./build-downstream/bin/ShowActsVersion
       
