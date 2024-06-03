@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  CUDA_toolkit_version:
+  CUDA_toolkit_version_ubuntu:
     name: CUDA toolkit version
     runs-on: ubuntu-latest
 
@@ -29,6 +29,32 @@ jobs:
           cuda-version: ${{ matrix.cuda-version }}
           coverage: none
 
+  Python3_Version_ubuntu:
+    name: Python3 version
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.07"
+          - "3.08"
+          - "3.09"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: [python setupt script here for ubuntu]
+        with:
+          python-version: ${{ matrix.python-version }}
+          coverage: none
+  
+    
   linux_ubuntu:
     runs-on: [self-hosted, linux]
     container: ghcr.io/acts-project/ubuntu2204:v41
